@@ -6,21 +6,21 @@ function UserPosts({ userId, showRecent }) {
   const [loading, setLoading] = useState(true);
 
   // Fetch posts based on userId
-  useEffect(() => {
-    const fetchPosts = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get(
-          `https://jsonplaceholder.typicode.com/posts?userId=${userId}`
-        );
-        setPosts(response.data);
-      } catch (error) {
-        console.error("Error fetching posts:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchPosts = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(
+        `https://jsonplaceholder.typicode.com/posts?userId=${userId}`
+      );
+      setPosts(response.data);
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchPosts();
   }, [userId]);
 
@@ -47,7 +47,9 @@ function UserPosts({ userId, showRecent }) {
         <div>
           {posts.map((post) => (
             <div key={post.id} className="p-2 mb-3 border-b border-gray-300">
-              <h3 className="font-bold text-lg text-gray-800 capitalize">{post.title}</h3>
+              <h3 className="font-bold text-lg text-gray-800 capitalize">
+                {post.title}
+              </h3>
               <p className="text-gray-700">{post.body}</p>
             </div>
           ))}
