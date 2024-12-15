@@ -1,18 +1,19 @@
-import { useState, useEffect } from "react";
-import { Modal, Button } from "antd";
-import UserPosts from "./UserPosts";
+import { useState } from "react";
+import { Button, Modal } from "antd";
+import UserPosts from "./UserPosts"; // Import UserPosts
 
 function UserCard({ id, name, email, phone }) {
   const [userDetails, setUserDetails] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isPostsModalOpen, setIsPostsModalOpen] = useState(false); // Modal state for all posts
 
   // Fetch user details
   const fetchUserDetails = async () => {
     try {
-      const response = await axios.get(
+      const response = await fetch(
         `https://jsonplaceholder.typicode.com/users/${id}`
       );
-      setUserDetails(response.data);
+      const data = await response.json();
+      setUserDetails(data);
     } catch (error) {
       console.error("Error fetching user details:", error);
     }
@@ -27,14 +28,14 @@ function UserCard({ id, name, email, phone }) {
     }
   };
 
-  // Open modal to view full posts
-  const handleViewPosts = () => {
-    setIsModalOpen(true);
+  // Open modal to view all posts
+  const handleViewAllPosts = () => {
+    setIsPostsModalOpen(true);
   };
 
   // Close modal
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
+  const handleClosePostsModal = () => {
+    setIsPostsModalOpen(false);
   };
 
   return (
@@ -44,18 +45,15 @@ function UserCard({ id, name, email, phone }) {
       <p className="text-gray-600">{phone}</p>
 
       <div className="flex gap-4 mt-4">
-        {/* Button to toggle user details */}
         <Button type="primary" onClick={toggleUserInfo}>
           {userDetails ? "Hide Info" : "View More Info"}
         </Button>
 
-        {/* Button to open modal for posts */}
-        <Button type="default" onClick={handleViewPosts}>
-          View Posts
+        <Button type="default" onClick={handleViewAllPosts}>
+          View All Posts
         </Button>
       </div>
 
-      {/* Display user details */}
       {userDetails && (
         <div className="mt-4 text-sm text-gray-700">
           <p>
@@ -70,17 +68,18 @@ function UserCard({ id, name, email, phone }) {
         </div>
       )}
 
-      {/* Display UserPosts component with the id as userId */}
-      <UserPosts userId={id} />
+      {/* Recent Posts Section */}
+      <UserPosts userId={id} showRecent={true} />
 
-      {/* Modal for viewing full posts */}
+      {/* Modal for All Posts */}
       <Modal
-        title={`Posts by ${name}`}
-        visible={isModalOpen}
-        onCancel={handleCloseModal}
+        title={<h2 className="text-blue-800">Posts by {name}</h2>}
+        open={isPostsModalOpen}
+        onCancel={handleClosePostsModal}
         footer={null}
+        width={600}
       >
-        {/* Posts will be rendered inside UserPosts */}
+        <UserPosts userId={id} showRecent={false} /> {/* Fetch all posts */}
       </Modal>
     </div>
   );
